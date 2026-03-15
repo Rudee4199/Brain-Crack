@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🧠 Brain Crack – 300 Levels of Madness</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+</head>
+<body>
+
+<!-- ========== SPLASH SCREEN ========== -->
+<div id="splash">
+  <div class="splash-stars">⭐ 🧠 ⭐</div>
+  <div class="splash-brain" id="splash-brain">🧠</div>
+  <div class="splash-title">Brain<br>Crack!</div>
+  <div class="splash-sub">300 Levels of Pure Madness</div>
+
+  <!-- Loading bar (auto-fills, then shows button) -->
+  <div id="splash-loading" style="width:220px;display:flex;flex-direction:column;align-items:center;gap:8px">
+    <div style="width:100%;height:8px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden">
+      <div id="splash-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#ff6b35,#ff006e);border-radius:99px;transition:width 0.08s linear"></div>
+    </div>
+    <div id="splash-loading-txt" style="color:#6b4a8a;font-size:12px;font-weight:700;letter-spacing:1px">Loading...</div>
+  </div>
+
+  <button class="splash-tap-btn" id="splash-btn" style="display:none" onclick="startGame()">▶ TAP TO PLAY 🎵</button>
+  <div class="splash-note" id="splash-note" style="display:none">Music starts automatically!</div>
+</div>
+
+
+<!-- HUD -->
+<div class="hud" id="hud" style="display:none">
+  <button class="hud-btn" onclick="goBack()">← Back</button>
+  <div class="hud-coins">🪙 <span id="hud-coin-count">0</span></div>
+  <button class="hud-btn" onclick="showScreen('screen-shop')">💡 Shop</button>
+</div>
+
+<!-- ========== HOME SCREEN ========== -->
+<div id="screen-home" class="screen active">
+  <div style="height:30px"></div>
+  <div class="logo">🧠 Brain<br>Crack!</div>
+  <div class="logo-sub">300 Levels of Pure Madness</div>
+  <div style="height: 10px"></div>
+  <button class="btn-primary" onclick="showScreen('screen-worlds')">▶ PLAY</button>
+  <button class="btn-secondary" onclick="showScreen('screen-leaderboard')">🏆 Leaderboard</button>
+  <button class="btn-secondary" onclick="showScreen('screen-shop')">🛒 Shop</button>
+  <button class="btn-secondary" onclick="showScreen('screen-achievements')">🏅 Achievements</button>
+  <button id="music-toggle-btn" onclick="toggleBgMusic()" style="background:transparent;border:2px solid var(--accent3);color:var(--accent3);font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;padding:8px 24px;border-radius:50px;cursor:pointer;transition:all 0.2s;">🎵 Music: ON</button>
+  <div class="ad-banner">📢 AD SPACE – Your Ad Here</div>
+</div>
+
+<!-- ========== WORLD SELECT ========== -->
+<div id="screen-worlds" class="screen">
+  <div style="height:80px"></div>
+  <div class="worlds-title">🗺️ Choose World</div>
+  <div class="worlds-grid" id="worlds-grid"></div>
+  <div style="height:20px"></div>
+</div>
+
+<!-- ========== LEVEL SELECT ========== -->
+<div id="screen-levels" class="screen">
+  <div style="height:80px"></div>
+  <div class="levels-title" id="levels-title">World 1</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="world-progress-bar" style="width:0%"></div>
+  </div>
+  <div class="levels-grid" id="levels-grid"></div>
+</div>
+
+<!-- ========== GAME SCREEN ========== -->
+<div id="screen-game" class="screen">
+  <div style="height:70px"></div>
+  <div class="game-meta">
+    <span id="level-label" style="font-family:'Fredoka One',cursive;font-size:16px">Level 1</span>
+    <div class="timer-display">⏱ <span id="timer">00:00</span></div>
+    
+  </div>
+  <div class="question-card">
+    <div class="question-tag" id="q-tag">BRAIN TEASER</div>
+    <div class="question-text" id="q-text">Loading...</div>
+  </div>
+  <div class="puzzle-area" id="puzzle-area"></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center">
+    <button class="hint-btn" onclick="useHint()">💡 Hint (<span id="hint-count">0</span> left)</button>
+    <div style="font-size:11px;color:var(--muted);font-weight:700;text-align:center">1 hint per level only</div>
+  </div>
+  <div class="hint-box hidden" id="hint-box" style="background:rgba(255,190,11,0.15);border:1.5px solid var(--accent2);border-radius:14px;padding:12px 16px;max-width:500px;width:100%;font-weight:700;color:var(--accent2)"></div>
+</div>
+
+<!-- ========== LEADERBOARD ========== -->
+<div id="screen-leaderboard" class="screen">
+  <div style="height:80px"></div>
+  <div class="lb-title">🏆 Leaderboard</div>
+  <div class="lb-list" id="lb-list"></div>
+</div>
+
+<!-- ========== SHOP ========== -->
+<div id="screen-shop" class="screen">
+  <div style="height:80px"></div>
+  <div class="shop-title">🛒 Shop</div>
+  <div style="color:var(--muted);font-weight:700;font-size:14px">Your coins: 🪙 <span id="shop-coins">0</span></div>
+  <div class="shop-grid">
+    <div class="shop-item">
+      <div class="shop-icon">💡</div>
+      <div class="shop-info">
+        <div class="shop-name">Hint Pack ×3</div>
+        <div class="shop-desc">Get 3 hints to use on tough puzzles</div>
+      </div>
+      <button class="shop-buy" onclick="buyHints(3,50)">🪙 50</button>
+    </div>
+    <div class="shop-item">
+      <div class="shop-icon">💡💡</div>
+      <div class="shop-info">
+        <div class="shop-name">Hint Pack ×10</div>
+        <div class="shop-desc">Stock up with 10 hints!</div>
+      </div>
+      <button class="shop-buy" onclick="buyHints(10,140)">🪙 140</button>
+    </div>
+    <div class="shop-item">
+      <div class="shop-icon">⏩</div>
+      <div class="shop-info">
+        <div class="shop-name">Skip Level</div>
+        <div class="shop-desc">Too hard? Skip it!</div>
+      </div>
+      <button class="shop-buy" onclick="skipLevel()">🪙 30</button>
+    </div>
+  </div>
+  <div class="ad-banner">📢 AD SPACE – Rewarded Video Ad</div>
+</div>
+
+<!-- ====== MODALS ====== -->
+<!-- Daily Reward -->
+<div class="modal-overlay" id="modal-daily">
+  <div class="modal">
+    <div style="font-size:48px">🎁</div>
+    <h2>Daily Reward!</h2>
+    <p>You opened the game today!<br>Here's your bonus:</p>
+    <span class="reward-coins">🪙 +50</span>
+    <button class="btn-primary" style="font-size:16px;padding:12px 32px" onclick="claimDaily()">CLAIM!</button>
+  </div>
+</div>
+
+<!-- Result -->
+<div class="result-overlay" id="result-overlay">
+  <div class="result-card">
+    <span class="result-emoji" id="result-emoji">🎉</span>
+    <div class="result-title" id="result-title">Brilliant!</div>
+    <div class="stars-display" id="result-stars">⭐⭐⭐</div>
+    <div class="result-coins" id="result-coins">+30 🪙</div>
+    <div id="result-time" style="color:var(--muted);font-size:13px;font-weight:700"></div>
+    <div class="result-btns">
+      <button class="btn-secondary" onclick="retryLevel()">🔄 Retry</button>
+      <button class="btn-primary" style="font-size:15px;padding:12px 24px" onclick="nextLevel()">Next ▶</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== ACHIEVEMENTS SCREEN ========== -->
+<div id="screen-achievements" class="screen">
+  <div style="height:80px"></div>
+  <div class="ach-title">🏅 Achievements</div>
+  <div class="ach-grid" id="ach-grid"></div>
+  <div style="height:20px"></div>
+</div>
+
+<!-- Achievement Popup -->
+<div class="ach-popup" id="ach-popup">
+  <div class="ach-popup-icon" id="ach-popup-icon">🏅</div>
+  <div>
+    <div class="ach-popup-text">Achievement Unlocked!</div>
+    <div class="ach-popup-name" id="ach-popup-name">—</div>
+  </div>
+</div>
+
+<!-- Wrong Answer Restart Overlay -->
+<div class="wrong-overlay" id="wrong-overlay">
+  <div class="wrong-card">
+    <span class="wrong-big" id="wrong-emoji">❌</span>
+    <div class="wrong-title">WRONG!</div>
+    <div class="wrong-msg" id="wrong-msg">Level restarting...</div>
+    <div class="restart-countdown" id="restart-countdown">3</div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
